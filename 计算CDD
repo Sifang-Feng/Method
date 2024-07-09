@@ -1,0 +1,57 @@
+function y=cal_CDD(x,t0)
+% t0为干旱定义阈值
+    datalength=length(x);
+    y=zeros(datalength,1);     %求连续干日
+    datacdd=zeros(datalength,1);
+
+    % Get a vector with values (1 or 0) if the condition is satisfied or not
+    thres=ones(datalength,1).*t0;
+    datacdd(find(x<thres))=ones(size(find(x<thres)));
+    % Get the index matrix id
+    dy=ones(datalength,1);
+
+    dy(2:end,1)=diff(datacdd);
+
+    id=zeros(1,2);
+
+   k=1;
+
+    for i=1:datalength
+        if dy(i,1)==1
+            id(k,1)=i;
+            continue
+        elseif dy(i,1)==-1
+            id(k,2)=i-1;
+            k=k+1;
+            continue
+        end
+
+    end
+
+    if datacdd(end,1)==1
+        id(k,2)=datalength;
+        k=k+1;
+    end
+
+
+% If there are values that is larger than t0
+
+    if k>1
+%        for j1=1:(k-1)
+%         % 合并事件
+%         if id(j1+1,1)-id(j1,2)<=2 %仅间隔一天合并
+%             id(j1,2)=id(j1+1,2); %合并
+%             id(j1+1,:)=[]; %删去
+%         end
+%        end
+            
+       %逐日计算连续无雨日数
+        for j=1:length(id(:,1))
+            y(id(j,1):id(j,2),1)=[1:1:(id(j,2)-id(j,1)+1)]';%sum(datacdd(id(j,1):id(j,2),1));      
+        end
+
+    % Else if there are no value larger than t0, assign 0
+    
+    end
+
+end
