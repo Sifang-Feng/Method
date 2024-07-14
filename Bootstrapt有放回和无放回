@@ -1,0 +1,10 @@
+%% 无放回采样
+for i=1 %1:1000
+   rowrank34=randperm(34);
+   length(unique(rowrank34))
+end
+%% 有放回采样
+for i=1 %1:1000
+   rowrank34=randi(34,1,34);
+   length(unique(rowrank34))
+end
