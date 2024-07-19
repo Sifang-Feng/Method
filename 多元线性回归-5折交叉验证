@@ -1,0 +1,35 @@
+function  y_pred=MultipleRegressionModel_3variables_5foldCrossValidation(X,y,k)
+
+%  X= [ones(size(dy_noirr1)), dCDD1,dTcdd1,dCDD1.*dTcdd1];
+ 
+indices=crossvalind('Kfold',X,k);  %进行随机分包
+minError = inf;
+bestB = [];
+
+for kk=1:k  %交叉验证k=k，10个包轮流作为测试集
+    
+    test = (indices == kk);   %获得test集元素在数据集中对应的单元编号
+    train = ~test;  %train集元素的编号为非test元素的编号
+    
+    train_y=y(train);%从数据集中划分出train样本的数据
+    train_x=X(train,:);%从数据集中划分出train样本的数据
+    
+    test_y=y(test,:);  %test样本集
+    test_x=X(test,:);  %test样本集
+    
+    [bb, ~, ~, ~, ~] = regress(train_y,train_x);
+    y_pred_test =bb(1)+test_x(:,2).*bb(2)+...
+        test_x(:,3).*bb(3)+test_x(:,4).*bb(4);
+    
+    % 计算误差
+    currentError = norm(y_pred_test- test_y);
+
+    % 更新最佳模型
+    if currentError < minError
+        minError = currentError;
+        bestB = bb;  % 存储最佳模型的预测结果
+    end
+    
+end
+y_pred =bestB(1)+dCDD1.*bestB(2)...
+    +dTcdd1.*bestB(3)+dCDD1.*dTcdd1.*bestB(4);
