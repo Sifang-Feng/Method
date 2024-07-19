@@ -1,8 +1,7 @@
 function  y_pred=MultipleRegressionModel_3variables_5foldCrossValidation(X,y,k)
 
 %  X= [ones(size(dy_noirr1)), dCDD1,dTcdd1,dCDD1.*dTcdd1];
- 
-indices=crossvalind('Kfold',X,k);  %进行随机分包
+indices=crossvalind('Kfold',X(:,1),k);  %进行随机分包
 minError = inf;
 bestB = [];
 
@@ -31,5 +30,5 @@ for kk=1:k  %交叉验证k=k，10个包轮流作为测试集
     end
     
 end
-y_pred =bestB(1)+dCDD1.*bestB(2)...
-    +dTcdd1.*bestB(3)+dCDD1.*dTcdd1.*bestB(4);
+y_pred =bestB(1)+X(:,2).*bestB(2)...
+    +X(:,3).*bestB(3)+X(:,4).*bestB(4);
