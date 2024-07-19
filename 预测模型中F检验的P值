@@ -1,0 +1,33 @@
+function p_value = FtestPvalue(X,obs_y,pred_y)
+  
+% 假设有一组数据
+% X = [ones(100, 1) x1 x2];  % x1和x2是自变量，ones(100, 1)是截距项
+% y = ydata;  % ydata是因变量
+
+% 拟合线性回归模型
+% b = regress(y, X);
+
+% 计算预测值
+% y_pred = X * b;
+
+% 计算总平方和 (SS_total)
+SS_total = sum((obs_y - mean(obs_y)).^2);
+
+% 计算回归平方和 (SS_regression)
+SS_regression = sum((pred_y - mean(obs_y)).^2);
+
+% 计算残差平方和 (SS_residual)
+SS_residual = SS_total - SS_regression;
+
+% 检查残差平方和是否为零
+if SS_residual == 0
+    fprintf('Residual sum of squares is zero, F statistic is undefined.\n');
+else
+    % 计算 F 统计量
+    k = size(X, 2);  % 自变量的数量
+    n = length(obs_y);   % 样本数量
+    F_stat = (SS_regression / (k-1)) / (SS_residual / (n-k-1));
+
+    % 计算 F 检验的 P 值
+    p_value = 1 - fcdf(F_stat, k-1, n-k-1);
+end
